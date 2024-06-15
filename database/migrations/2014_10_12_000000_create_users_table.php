@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->integer('level')->default(1); // 1 for admins, 0 for super-admin, 2 for regular staff (futuristic)
+            $table->string('role')->nullable();
+            $table->string('phone_number', 20)->unique()->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
