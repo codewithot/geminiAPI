@@ -8,4 +8,26 @@ use Illuminate\Database\Eloquent\Model;
 class Job extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'title',
+        'description',
+        'department',
+        'employment_type',
+        'location',
+        'is_active',
+        'salary'
+    ];
+    private $is_active;
+    private $location;
+    private $department;
+    private $salary;
+    private $title;
+    private $description;
+    private $employment_type;
+
+    public function applicant()
+    {
+        return $this->hasMany(Applicant::class);
+    }
 }

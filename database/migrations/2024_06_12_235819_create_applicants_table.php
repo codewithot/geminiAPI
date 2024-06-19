@@ -7,19 +7,19 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration
 {
     /**
-     * Run the migrations.
+     * Run the migrations
      */
     public function up(): void
     {
         Schema::create('applicants', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('job_id');
             $table->string('first_name');
             $table->string('last_name');
             $table->string('email');
-            $table->string('Job_title')->nullable();
-            $table->integer('salary')->nullable();
             $table->string('resume');
             $table->string('cover_letter')->nullable();
+            $table->foreign('job_id')->references('id')->on('jobs')->onDelete('cascade');
             $table->timestamps();
         });
     }

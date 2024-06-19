@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CompleteProfileRequest;
 use App\Http\Requests\SignupRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,14 +18,16 @@ class AuthController extends Controller
     {
         $name = $request->input('name');
         $email = $request->input('email');
-        $password = $request->input('password');
-        $level = $request?->input('level');
+        $level = $request->input('level');
+
+        var_dump($name);
+        var_dump($email);
+        var_dump($level);
 
         $user = User::create([
             'name' => $name,
             'email' => $email,
-            'password' => bcrypt($password),
-            'level' => $level,
+            'level'=> $level
         ]);
 
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -33,12 +37,13 @@ class AuthController extends Controller
 
         $response = [
             'message' => 'Admin registered successfully' ,
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $token,
         ];
 
         return response()->json($response, 200);
     }
+    
 
     public function login(Request $request): JsonResponse
     {

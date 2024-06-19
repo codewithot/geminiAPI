@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreEnquiryRequest;
+use App\Http\Resources\EnquiryResource;
 use App\Models\Enquiry;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +20,7 @@ class EnquiryController extends Controller
      */
     public function index()
     {
-        return Enquiry::all();
+        return EnquiryResource::collection(Enquiry::all());
     }
 
     /**
@@ -37,7 +38,7 @@ class EnquiryController extends Controller
             if ($enquiry){
                 $response = [
                     'message' => 'Enquiry successfully added ' ,
-                    'enquiry' => $enquiry,
+                    'enquiry' => new EnquiryResource($enquiry),
                 ];
                 return response()->json($response, 200);
             }
@@ -52,10 +53,12 @@ class EnquiryController extends Controller
 
     /**
      * Display the specified resource.
+     * @param Enquiry $enquiry
+     * @return EnquiryResource
      */
     public function show(Enquiry $enquiry)
     {
-        //
+        return new EnquiryResource($enquiry);
     }
 
     /**

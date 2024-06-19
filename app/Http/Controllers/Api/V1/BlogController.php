@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Http\Requests\StoreBlogRequest;
 use App\Http\Requests\UpdateBlogRequest;
+use Illuminate\Http\JsonResponse;
+use function Illuminate\Process\input;
+use App\Http\Resources\BlogResource;
 
 class BlogController extends Controller
 {
@@ -14,7 +17,7 @@ class BlogController extends Controller
      */
     public function index()
     {
-        //
+        return BlogResource::collection(Blog::all());
     }
 
     /**
@@ -27,18 +30,54 @@ class BlogController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * @param StoreBlogRequest $request
+     * @return JsonResponse
      */
     public function store(StoreBlogRequest $request)
     {
-        //
+        try {
+            $blog = new Blog();
+            $userId = $request->input('user_id');
+            $topic = $request->input('topic');
+            $body = $request->input('body');
+            $category = $request->input('category');
+            $image = $request->file('image');
+            $isActive =  $request?->input('is_active');
+
+            $imageFileName = $topic.'.'.$image->getClientOriginalName();
+            $image->move('blogImages', $imageFileName);
+            if($isActive){
+                $blog->is_active = $isActive;
+            }
+
+            $blog->topic = $topic;
+            $blog->user_id = $userId;
+            $blog->body = $body;
+            $blog->category = $category;
+            $blog->image = $imageFileName;
+            $blog->save();
+
+            $response = [
+                'message' => 'Blog post added successfully',
+                'data' => new BlogResource($blog),
+            ];
+            return response()->json($response, 200);
+        }catch (\Throwable $th){
+            return response()->json([
+                'status'=> false,
+                'message'=> $th->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Display the specified resource.
+     * @param Blog $blog
+     * @return BlogResource
      */
     public function show(Blog $blog)
     {
-        //
+        return new BlogResource($blog);
     }
 
     /**

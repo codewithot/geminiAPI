@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreJobRequest;
+use App\Http\Resources\JobResource;
 use App\Models\Job;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use function Illuminate\Process\input;
 
 class JobController extends Controller
 {
@@ -13,7 +17,7 @@ class JobController extends Controller
      */
     public function index()
     {
-        //
+        return JobResource::collection(Job::all());
     }
 
     /**
@@ -26,22 +30,65 @@ class JobController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     * @param StoreJobRequest $request
+     * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreJobRequest $request)
     {
-        //
+        try {
+            $job = new Job();
+            $title = $request->input('title');
+            $description = $request->input('description');
+            $department = $request?->input('department');
+            $employment_type = $request->input('employment_type');
+            $location = $request?->input('location');
+            $salary = $request?->input('salary');
+            $is_active = $request?->input('is_active');
+
+            if($salary){
+                $job->salary = $salary;
+            }
+            if($department){
+                $job->department = $department;
+            }
+            if($location){
+                $job->location = $location;
+            }
+            if($is_active){
+                $job->is_active = $is_active;
+            }
+
+            $job->title = $title;
+            $job->description = $description;
+            $job->employment_type = $employment_type;
+            $job->save();
+
+            $response = [
+                'message' => 'Job Opening successfully added',
+                'data' => new JobResource($job),
+            ];
+            return response()->json($response, 200);
+        }catch (\Throwable $th){
+            return response()->json([
+                'status'=> false,
+                'message'=> $th->getMessage()
+            ], 500);
+        }
     }
 
     /**
      * Display the specified resource.
+     * @param Job $job
+     * @return JobResource
      */
     public function show(Job $job)
     {
-        //
+        return new JobResource($job);
     }
 
     /**
      * Show the form for editing the specified resource.
+     * @param Job $job
      */
     public function edit(Job $job)
     {
@@ -50,6 +97,8 @@ class JobController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * @param Request $request
+     * @param Job $job
      */
     public function update(Request $request, Job $job)
     {
@@ -58,6 +107,7 @@ class JobController extends Controller
 
     /**
      * Remove the specified resource from storage.
+     * @param Job $job
      */
     public function destroy(Job $job)
     {
