@@ -9,6 +9,8 @@ use App\Models\Job;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use function Illuminate\Process\input;
+use Carbon\Carbon;
+
 
 class JobController extends Controller
 {
@@ -43,7 +45,10 @@ class JobController extends Controller
             $employment_type = $request->input('employment_type');
             $location = $request?->input('location');
             $salary = $request?->input('salary');
-            $is_active = $request?->input('is_active');
+            $deadline = $request->input('deadline');
+            $experience = $request->input('experience');
+            // $deadline = Carbon::createFromFormat('m/d/Y', $deadline)->format('Y-m-d');
+         
 
             if($salary){
                 $job->salary = $salary;
@@ -54,13 +59,12 @@ class JobController extends Controller
             if($location){
                 $job->location = $location;
             }
-            if($is_active){
-                $job->is_active = $is_active;
-            }
 
             $job->title = $title;
             $job->description = $description;
             $job->employment_type = $employment_type;
+            $job->deadline = $deadline;
+            $job->experience = $experience;
             $job->save();
 
             $response = [

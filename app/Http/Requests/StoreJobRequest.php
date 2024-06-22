@@ -24,11 +24,13 @@ class StoreJobRequest extends FormRequest
         return [
             'title' => 'required|string',
             'description' => 'required|string',
-            'department' => 'sometimes|string',
+            'department' => 'required|string',
             'employment_type' => 'required|string',
-            'location' => 'sometimes|string',
-            'salary' => 'sometimes|integer',
-            'is_active'=> 'sometimes|boolean'
+            'location' => 'required|string',
+            'salary' => 'sometimes',
+            'is_active'=> 'sometimes|boolean',
+            'deadline'=>'required',
+            'experience'=> 'required|integer'
         ];
     }
 }

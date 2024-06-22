@@ -28,7 +28,7 @@ class CompleteAccount extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('contact@geminigroupng.com', 'Welcome To Gemini'),
+            from: new Address('noreply@geminigroupng.com', 'Welcome To Gemini'),
             subject: 'Important: Kindly complete your profile ',
         );
     }

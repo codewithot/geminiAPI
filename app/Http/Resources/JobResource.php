@@ -23,7 +23,9 @@ class JobResource extends JsonResource
             'location'=>(string)$this->location,
             'isActive'=>(string)$this->is_active? true : false,
             'salary'=>(string)$this->salary,
-            // 'applicants'=>(string)$this->applicant?->first_name,
+            'deadline'=>(string)$this->deadline,
+            'experience'=>(string)$this->experience,
+            // 'applicants'=>$this->applicant->first_name?(string)$this->applicant->first_name: 'null' ,
         ];
     }
 }

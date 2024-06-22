@@ -16,7 +16,9 @@ class Job extends Model
         'employment_type',
         'location',
         'is_active',
-        'salary'
+        'salary',
+        'deadline',
+        'experience'
     ];
     private $is_active;
     private $location;

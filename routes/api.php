@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+// use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\ApplicantController;
 use App\Http\Controllers\Api\V1\AuthController;
@@ -19,17 +19,19 @@ Route::get('/test', function () {
 // private routes
 Route::group(['middleware'=> ['auth:sanctum']], function () {
     Route::apiResource('/v1/users', UserController::class);
-    Route::apiResource('/v1/enquiries', EnquiryController::class);
-    Route::apiResource('/v1/applicants', ApplicantController::class);
+    
+    
     Route::post('/v1/signup', [AuthController::class, 'signup']);
     Route::post('/v1/verify', [AuthController::class, 'verify']);
 });
 
 // public routes
 Route::prefix('v1')->group(function (){
+    Route::apiResource('/applicants', ApplicantController::class);
     Route::post('/resend-code', [AuthController::class, 'sendCode']);
     Route::post('/forgot-password', [AuthController::class, 'sendCode']);
     Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+    Route::apiResource('/enquiries', EnquiryController::class);
     Route::apiResource('/blogs', BlogController::class );
     Route::apiResource('/jobs', JobController::class);
     Route::post('/login', [AuthController::class, 'login']);
