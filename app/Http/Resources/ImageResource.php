@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class BlogResource extends JsonResource
+class ImageResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,12 +16,10 @@ class BlogResource extends JsonResource
     {
         return [
             'id'=> (string)$this->id,
-            'authorName'=>(string)$this->user->name,
-            'topic'=>(string)$this->topic,
-            'body'=>(string)$this->body,
-            'category'=>(string)$this->category,
-            'isActive'=>(string)$this->is_active? true : false,
-            'image'=>$this->image,
+            'blogId'=>(string)$this->blog_id,
+            'userId'=>(string)$this->user_id,
+            'name'=>(string)$this->name,
+            'type'=>(string)$this->type,
             'dateCreated'=>$this->created_at->format('Y-m-d'),
         ];
     }

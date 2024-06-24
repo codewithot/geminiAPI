@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Models\Image;
 use App\Http\Requests\StoreBlogRequest;
 use App\Http\Requests\UpdateBlogRequest;
 use Illuminate\Http\JsonResponse;
@@ -35,27 +36,57 @@ class BlogController extends Controller
      */
     public function store(StoreBlogRequest $request)
     {
+        $user = $request->user();
+        $userId = $user->id;
+        $imageType = "blog";
+        
         try {
             $blog = new Blog();
-            $userId = $request->input('user_id');
             $topic = $request->input('topic');
             $body = $request->input('body');
             $category = $request->input('category');
             $image = $request->file('image');
-            $isActive =  $request?->input('is_active');
 
             $imageFileName = $topic.'.'.$image->getClientOriginalName();
             $image->move('blogImages', $imageFileName);
-            if($isActive){
-                $blog->is_active = $isActive;
-            }
 
             $blog->topic = $topic;
             $blog->user_id = $userId;
             $blog->body = $body;
             $blog->category = $category;
-            $blog->image = $imageFileName;
             $blog->save();
+
+            $blogID = $blog->id;
+            $image = new Image();
+
+            $image->blog_id = $blogID;
+            $image->name = $imageFileName;
+            $image->type = $imageType; 
+            $image->save();
+            
+            if ($request->file('image_two')){
+                $imageTwo = $request->file('image_two');
+                $imageFileName = $topic.'2.'.$imageTwo->getClientOriginalName();
+                $imageTwo->move('blogImages', $imageFileName);
+
+                $img = new Image();
+                $img->blog_id = $blogID;
+                $img->name = $imageFileName;
+                $img->type = $imageType; 
+                $img->save();
+            }
+
+            if ($request->file('image_three')){
+                $imageThree = $request->file('image_three');
+                $imageFileName = $topic.'3.'.$imageThree->getClientOriginalName();
+                $imageThree->move('blogImages', $imageFileName);
+
+                $img = new Image();
+                $img->blog_id = $blogID;
+                $img->name = $imageFileName;
+                $img->type = $imageType; 
+                $img->save();
+            }
 
             $response = [
                 'message' => 'Blog post added successfully',

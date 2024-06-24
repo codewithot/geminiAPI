@@ -13,10 +13,10 @@ class Applicant extends Model
         'first_name',
         'last_name',
         'email',
-        'job_title',
         'salary',
         'resume',
-        'cover_letter'
+        'cover_letter',
+        'job_id'
     ];
 
     public function job()

@@ -11,6 +11,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use function Illuminate\Process\input;
 use App\Http\Resources\ApplicantResource;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ApplicantController extends Controller
 {
@@ -30,36 +32,27 @@ class ApplicantController extends Controller
         //
     }
 
-
     public function store(StoreApplicantRequest $request): JsonResponse
     {
         try {
-            $request->validated($request->all());
-            $applicant = new Applicant();
-            $firstName = $request->input('first_name');
-            $lastName = $request->input('last_name');
-            $email = $request->input('email');
-            $resume = $request->file('resume');
-            $jobID = $request->input('job_id');
 
-            if ($request->hasFile('cover_letter')) {
-                $coverLetter = $request->file('cover_letter');
-                $path = $coverLetter->getClientOriginalName();
-                $coverFile = $firstName.'.'.$path;
-                $coverLetter->move('coverLetters', $coverFile);
-                $applicant->cover_letter = $coverFile;
+            if ($request->cover_letter){
+                $coverName = Str::random(32).".".$request->cover_letter->getClientOriginalExtension();
+                Storage::disk('public')->put($coverName, file_get_contents($request->cover_letter));
             }
-
-            $resumeFileName = $firstName.'.'.$resume->getClientOriginalName();
-            $resume->move('resumes', $resumeFileName);
-
-            $applicant->resume = $resumeFileName;
-            $applicant->email = $email;
-            $applicant->first_name = $firstName;
-            $applicant->last_name = $lastName;
-            $applicant->job_id = $jobID;
-            $applicant->save();
-
+            $resumeName = Str::random(32).".".$request->resume->getClientOriginalExtension();
+            $applicant = Applicant::create([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'resume' => $resumeName,
+                'cover_letter'=> $coverName,
+                'email' => $request->email,
+                'job_id' => $request->job_id
+            ]);
+            Storage::disk('public')->put($resumeName, file_get_contents($request->resume));
+            
+            
+           
             $response = [
                 'message' => 'Job Application successfully added',
                 'data' => new ApplicantResource($applicant),
@@ -73,6 +66,8 @@ class ApplicantController extends Controller
         }
     }
 
+    
+
 
     /**
      * Display the specified resource.
@@ -81,6 +76,12 @@ class ApplicantController extends Controller
      */
     public function show(Applicant $applicant)
     {
+        $applicant = Applicant::find($applicant->id);
+        if(!$applicant){
+          return response()->json([
+             'message'=>'Product Not Found.'
+          ],404);
+        }
         return new ApplicantResource($applicant);
     }
 

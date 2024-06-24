@@ -22,12 +22,12 @@ class StoreBlogRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|integer',
             'topic' => 'required|string',
             'body' => 'required|string',
             'category' => 'required|string',
             'image' => 'required|file',
-            'is_active'=> 'sometimes|boolean'
+            'image_two' => 'sometimes|file',
+            'image_three' => 'sometimes|file',
         ];
     }
 }

@@ -26,8 +26,8 @@ class StoreApplicantRequest extends FormRequest
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'email' => 'required|email',
-            'resume' => 'required|file',
-            'cover_letter'=> 'sometimes|file',
+            'resume' => 'sometimes|file|mimes:pdf,doc,docx,ppt,pptx,txt|max:4096',
+            'cover_letter' => 'sometimes|file|mimes:pdf,doc,docx,ppt,pptx,txt|max:4096',
             'job_id'=> 'required|integer'
         ];
 

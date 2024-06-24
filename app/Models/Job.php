@@ -20,13 +20,7 @@ class Job extends Model
         'deadline',
         'experience'
     ];
-    private $is_active;
-    private $location;
-    private $department;
-    private $salary;
-    private $title;
-    private $description;
-    private $employment_type;
+    
 
     public function applicant()
     {

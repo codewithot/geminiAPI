@@ -20,7 +20,7 @@ Route::get('/test', function () {
 Route::group(['middleware'=> ['auth:sanctum']], function () {
     Route::apiResource('/v1/users', UserController::class);
     
-    
+    Route::post('/v1/blogs', [BlogController::class, 'store']);
     Route::post('/v1/signup', [AuthController::class, 'signup']);
     Route::post('/v1/verify', [AuthController::class, 'verify']);
 });
@@ -32,7 +32,8 @@ Route::prefix('v1')->group(function (){
     Route::post('/forgot-password', [AuthController::class, 'sendCode']);
     Route::post('/reset-password', [AuthController::class, 'resetPassword']);
     Route::apiResource('/enquiries', EnquiryController::class);
-    Route::apiResource('/blogs', BlogController::class );
+    Route::get('/blogs', [BlogController::class, 'index']);
+    Route::get('/blogs/{blog}', [BlogController::class, 'show']);
     Route::apiResource('/jobs', JobController::class);
     Route::post('/login', [AuthController::class, 'login']);
 });
