@@ -18,8 +18,10 @@ Route::get('/test', function () {
 
 // private routes
 Route::group(['middleware'=> ['auth:sanctum']], function () {
-    Route::apiResource('/v1/users', UserController::class);
-    
+    Route::get('/v1/users', [UserController::class,'index']);
+    Route::post('/v1/users', [UserController::class,'store']);
+    Route::get('/v1/users/{user}', [UserController::class,'show']);
+
     Route::post('/v1/blogs', [BlogController::class, 'store']);
     Route::post('/v1/signup', [AuthController::class, 'signup']);
     Route::post('/v1/verify', [AuthController::class, 'verify']);
@@ -28,14 +30,15 @@ Route::group(['middleware'=> ['auth:sanctum']], function () {
 // public routes
 Route::prefix('v1')->group(function (){
     Route::apiResource('/applicants', ApplicantController::class);
-    Route::post('/resend-code', [AuthController::class, 'sendCode']);
-    Route::post('/forgot-password', [AuthController::class, 'sendCode']);
-    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
     Route::apiResource('/enquiries', EnquiryController::class);
     Route::get('/blogs', [BlogController::class, 'index']);
     Route::get('/blogs/{blog}', [BlogController::class, 'show']);
+    Route::get('/blogs/image/{blog}', [BlogController::class, 'blogimages']);
     Route::apiResource('/jobs', JobController::class);
     Route::post('/login', [AuthController::class, 'login']);
+    
+    Route::patch('/users/{user}', [UserController::class, 'update']);
 });
 
 

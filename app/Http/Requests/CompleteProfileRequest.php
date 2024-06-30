@@ -23,7 +23,7 @@ class CompleteProfileRequest extends FormRequest
     {
         return [
             'password' => 'required|string',
-            'phone_number' => 'required|string',
+            'phone_number' => 'required',
             'role' => 'required|string'
         ];
     }

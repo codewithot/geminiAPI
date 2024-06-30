@@ -11,6 +11,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use App\Mail\EnquiryMail;
+use Illuminate\Support\Facades\Mail;
 
 
 class EnquiryController extends Controller
@@ -35,6 +37,8 @@ class EnquiryController extends Controller
     {
         try {
             $enquiry = Enquiry::create($request->validated());
+
+            Mail::to($enquiry->email)->queue(new EnquiryMail($enquiry));
             if ($enquiry){
                 $response = [
                     'message' => 'Enquiry successfully added ' ,
@@ -42,6 +46,7 @@ class EnquiryController extends Controller
                 ];
                 return response()->json($response, 200);
             }
+            return response()->json("Something went wrong, try again", 401);
         }catch (\Throwable $th){
             return response()->json([
                 'status'=> false,

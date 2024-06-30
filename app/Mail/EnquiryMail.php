@@ -2,36 +2,36 @@
 
 namespace App\Mail;
 
-
-use App\Models\User;
+use App\Models\Enquiry;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Address;
 
-
-class CompleteAccount extends Mailable
+class EnquiryMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(public User $user)
+    public function __construct(public Enquiry $enquiry)
     {
     }
 
     /**
      * Get the message envelope.
      */
+
+
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('noreply@geminigroupng.com', 'Welcome To Gemini Admin Dashboard'),
-            subject: 'Important: Kindly complete your profile ',
+            from: new Address('noreply@geminigroupng.com', 'Welcome To Gemini'),
+            subject: 'Thank you for contacting Gemini',
         );
     }
 
@@ -41,10 +41,9 @@ class CompleteAccount extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.complete'
+            view: 'emails.contact'
         );
     }
-
 
     /**
      * Get the attachments for the message.

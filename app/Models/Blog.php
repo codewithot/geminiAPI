@@ -10,12 +10,13 @@ class Blog extends Model
     use HasFactory;
 
     protected $fillable = [
-        'author_name',
+        'user_id',
         'topic',
         'body',
         'category',
         'image',
-        'is_active'
+        'is_active',
+        'summary'
     ];
 
     public function user(){
@@ -24,7 +25,7 @@ class Blog extends Model
 
     public function image()
     {
-        return $this->hasMany(Image::class);
+        return $this->hasOne(Image::class);
     }
 
 }

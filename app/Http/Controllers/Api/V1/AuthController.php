@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CompleteProfileRequest;
 use App\Http\Requests\SignupRequest;
 use App\Http\Resources\UserResource;
+use App\Mail\CompleteAccount;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
 {
@@ -20,10 +22,6 @@ class AuthController extends Controller
         $email = $request->input('email');
         $level = $request->input('level');
 
-        var_dump($name);
-        var_dump($email);
-        var_dump($level);
-
         $user = User::create([
             'name' => $name,
             'email' => $email,
@@ -32,8 +30,8 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
         $user->save();
-
-//        Mail::to($user->email)->queue(new SignupMail($user));
+        
+        Mail::to($user->email)->queue(new CompleteAccount($user));
 
         $response = [
             'message' => 'Admin registered successfully' ,

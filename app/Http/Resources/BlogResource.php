@@ -19,9 +19,10 @@ class BlogResource extends JsonResource
             'authorName'=>(string)$this->user->name,
             'topic'=>(string)$this->topic,
             'body'=>(string)$this->body,
+            'summary'=>(string)$this->summary,
             'category'=>(string)$this->category,
             'isActive'=>(string)$this->is_active? true : false,
-            'image'=>$this->image,
+            'image'=>$this->image->name,
             'dateCreated'=>$this->created_at->format('Y-m-d'),
         ];
     }

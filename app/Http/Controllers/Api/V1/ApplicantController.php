@@ -35,7 +35,6 @@ class ApplicantController extends Controller
     public function store(StoreApplicantRequest $request): JsonResponse
     {
         try {
-
             if ($request->cover_letter){
                 $coverName = Str::random(32).".".$request->cover_letter->getClientOriginalExtension();
                 Storage::disk('public')->put($coverName, file_get_contents($request->cover_letter));
@@ -45,13 +44,11 @@ class ApplicantController extends Controller
                 'first_name' => $request->first_name,
                 'last_name' => $request->last_name,
                 'resume' => $resumeName,
-                'cover_letter'=> $coverName,
+                'cover_letter'=> $coverName? $coverName : '',
                 'email' => $request->email,
                 'job_id' => $request->job_id
             ]);
             Storage::disk('public')->put($resumeName, file_get_contents($request->resume));
-            
-            
            
             $response = [
                 'message' => 'Job Application successfully added',
@@ -79,7 +76,7 @@ class ApplicantController extends Controller
         $applicant = Applicant::find($applicant->id);
         if(!$applicant){
           return response()->json([
-             'message'=>'Product Not Found.'
+             'message'=>'Applicant Not Found.'
           ],404);
         }
         return new ApplicantResource($applicant);

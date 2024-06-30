@@ -10,6 +10,8 @@ use App\Http\Requests\UpdateBlogRequest;
 use Illuminate\Http\JsonResponse;
 use function Illuminate\Process\input;
 use App\Http\Resources\BlogResource;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BlogController extends Controller
 {
@@ -21,6 +23,43 @@ class BlogController extends Controller
         return BlogResource::collection(Blog::all());
     }
 
+
+    public function blogimages(Blog $blog)
+    {
+        $image = Image::where('blog_id',$blog->id)->first();
+
+        if (!$image) {
+            return response()->json([
+                'message' => 'No blog image',
+            ], 401);
+        }
+        return response()->json([
+            'message' => 'image fetched successfully',
+            'images' => $image
+        ], 401);;
+
+
+        // if ($request->image_two){
+        //     $imageTwoName = Str::random(32).".".$request->image_two->getClientOriginalExtension();
+        //     Storage::disk('public')->put($imageTwoName, file_get_contents($request->image_two));
+        //     Image::create([
+        //         "blog_id" => $blogID,
+        //         "name" => $imageTwoName,
+        //         "type" => $imageType
+        //     ]);
+        // }
+
+        // if ($request->image_three){
+        //     $imageThreeName = Str::random(32).".".$request->image_three->getClientOriginalExtension();
+        //     Storage::disk('public')->put($imageThreeName, file_get_contents($request->image_three));
+        //     Image::create([
+        //         "blog_id" => $blogID,
+        //         "name" => $imageThreeName,
+        //         "type" => $imageType
+        //     ]);
+        // }
+
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -41,53 +80,24 @@ class BlogController extends Controller
         $imageType = "blog";
         
         try {
-            $blog = new Blog();
-            $topic = $request->input('topic');
-            $body = $request->input('body');
-            $category = $request->input('category');
-            $image = $request->file('image');
-
-            $imageFileName = $topic.'.'.$image->getClientOriginalName();
-            $image->move('blogImages', $imageFileName);
-
-            $blog->topic = $topic;
-            $blog->user_id = $userId;
-            $blog->body = $body;
-            $blog->category = $category;
-            $blog->save();
-
-            $blogID = $blog->id;
-            $image = new Image();
-
-            $image->blog_id = $blogID;
-            $image->name = $imageFileName;
-            $image->type = $imageType; 
-            $image->save();
+            $body = $request->body;
+            $summary = substr($body, 0, 140);
             
-            if ($request->file('image_two')){
-                $imageTwo = $request->file('image_two');
-                $imageFileName = $topic.'2.'.$imageTwo->getClientOriginalName();
-                $imageTwo->move('blogImages', $imageFileName);
-
-                $img = new Image();
-                $img->blog_id = $blogID;
-                $img->name = $imageFileName;
-                $img->type = $imageType; 
-                $img->save();
-            }
-
-            if ($request->file('image_three')){
-                $imageThree = $request->file('image_three');
-                $imageFileName = $topic.'3.'.$imageThree->getClientOriginalName();
-                $imageThree->move('blogImages', $imageFileName);
-
-                $img = new Image();
-                $img->blog_id = $blogID;
-                $img->name = $imageFileName;
-                $img->type = $imageType; 
-                $img->save();
-            }
-
+            $blog = Blog::create([
+                'topic' => $request->topic,
+                'body' => $request->body,
+                'category' => $request->category,
+                'user_id' => $userId,
+                'summary'=> $summary
+            ]);
+            $blogID = $blog->id;
+            
+            $imageName = Str::random(32).".".$request->image->getClientOriginalExtension();Storage::disk('public')->put($imageName, file_get_contents($request->image));
+            Image::create([
+                "blog_id" => $blogID,
+                "name" => $imageName,
+                "type" => $imageType
+            ]);
             $response = [
                 'message' => 'Blog post added successfully',
                 'data' => new BlogResource($blog),
